@@ -1,0 +1,14 @@
+{
+  "$schema": "https://swc.rs/schema.json",
+  "module": { "type": "es6" },
+  "jsc": {
+    "paths": {},
+    "target": "esnext",
+    "experimental": { "keepImportAttributes": true },
+    "parser": {
+      "syntax": "typescript",
+      "importAssertions": true
+    },
+    "transform": {}
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "Preserve",
+    "baseUrl": "src/client",
+    "paths": {
+      "@main": ["./main.ts"]
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "dotcms-integration-demo",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "build:client": "",
+    "dev:client": "swc compile --config-file ./build-config/development.swcrc --out-dir dist --watch -D --strip-leading-paths --delete-dir-on-start src"
+  },
+  "devDependencies": {
+    "@swc/cli": "0.4.1-nightly.20240914",
+    "@swc/core": "1.7.26",
+    "chokidar": "^3.6.0"
+  }
+}

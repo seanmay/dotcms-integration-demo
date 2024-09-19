@@ -1,0 +1,39 @@
+fragment ImageProps on DotBinary {
+  focalPoint
+  path
+  versionPath
+  size
+  name
+  width
+  height
+}
+
+fragment Image on DotFileasset {
+  fileAsset {
+    ...ImageProps
+  }
+}
+
+query ContentAPI {
+  blogs: BlogCollection(limit: 10) {
+    title
+    urlTitle
+
+    teaser
+    postingDate
+
+    tags
+
+    titleImage { ...ImageProps }
+
+    image { ...Image }
+
+    author {
+      firstName
+      lastName
+      profilePhoto { ...ImageProps }
+    }
+
+    blogContent { json }
+  }
+}
