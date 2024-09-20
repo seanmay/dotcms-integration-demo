@@ -9,6 +9,7 @@
   "devDependencies": {
     "@swc/cli": "0.4.1-nightly.20240914",
     "@swc/core": "1.7.26",
-    "chokidar": "^3.6.0"
+    "chokidar": "^3.6.0",
+    "typescript": "^5.7.0-dev.20240920"
   }
 }

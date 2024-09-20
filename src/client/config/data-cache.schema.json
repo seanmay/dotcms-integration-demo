@@ -4,9 +4,9 @@
   "stores": [
     {
       "name": "BlogCollection",
-      "primary_key": { "keyPath": ["data", "urlTitle"] },
+      "primary_key": { "keyPath": "urlTitle" },
       "indices": [
-        { "index_name": "tags", "field_name": ["data", "tags"], "flags": { "unique": false } }
+        { "index_name": "tags", "field_name": "tags", "flags": { "unique": false } }
       ]
     }
   ]

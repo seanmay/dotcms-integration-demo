@@ -1,9 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "Preserve",
+    "target": "esnext",
+    "module": "esnext",
     "baseUrl": "src/client",
+    "resolveJsonModule": true,
+    "moduleResolution": "Bundler",
     "paths": {
+      "root/*": ["./*"],
       "@main": ["./main.ts"],
       "@core/*": ["./core/*"],
       "@services/*": ["./core/services/*"],
