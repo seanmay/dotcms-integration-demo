@@ -1,5 +1,6 @@
+import type { CMSEndpointConfig } from "./endpoints";
 
-export const AuthService = (config: Record<string, string>) => {
+export const AuthService = (config: CMSEndpointConfig) => {
 
   const get_token = (user: string, password: string) => {
     const headers = [
@@ -19,7 +20,7 @@ export const AuthService = (config: Record<string, string>) => {
       body: JSON.stringify(payload),
     };
 
-    return fetch(config.auth_endpoint, request)
+    return fetch(config.auth, request)
       .then(res => res.ok ? res.json() : Promise.reject(res));
   };
 

@@ -1,40 +1,39 @@
 document.body.append(new Text("It works."));
 
-import { AuthService } from "./services/auth.service.js";
+import { DataCache } from "@core/storage.js";
+import { AuthService } from "@services/auth.service.js";
+import { resolve_cms_endpoints, resolve_app_endpoints } from "@services/endpoints.js";
 
-const auth = AuthService({
-  auth_endpoint: "https://demo.dotcms.com/api/v1/authentication/api-token",
-});
+import data_schema from "root/config/data-cache.schema.json" with { type: "json" };
 
-auth.get_token("admin@dotcms.com", "admin")
-  .then((output) => console.log(output));
+const cache = DataCache.open(data_schema);
+
+const endpoints = {
+  cms: resolve_cms_endpoints(),
+  app: resolve_app_endpoints(),
+};
+
+const auth = AuthService(endpoints.cms);
 
 const tap = <T extends any>(f: <U extends T>(x: U) => any) => (x: T) => {
   f<T>(x);
   return x;
 };
 
-await fetch("https://demo.dotcms.com/api/v1/nav/?depth=5", {
-  headers: [
-    [
-      "Authorization",
-      `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhcGk0YjY5ZDEwMC0xMDRkLTRhMGMtYWNkYS0wZDM5ZmU0YmVjZTIiLCJ4bW9kIjoxNzI2NzUwMjMwMDAwLCJuYmYiOjE3MjY3NTAyMzAsImlzcyI6ImE0M2RjZjYwYzkiLCJleHAiOjE3MjY4MzY2MzAsImlhdCI6MTcyNjc1MDIzMCwianRpIjoiNGNjM2VhM2YtODU4Mi00NzBjLTkyOWEtMDdkZTMzYzQ5NjdhIn0.3p8wsPv4S320KnzoHbPTv7XgAzybTHysvSYEnBGyOnQ`,
-    ],
-  ],
-})
-  .then((res) => res.json())
-  .then(tap(console.log));
+const auth_response = await auth.get_token("admin@dotcms.com", "admin");
 
+const nav_response = await fetch("https://demo.dotcms.com/api/v1/nav/?depth=5", {
+  headers: [["Authorization", `Bearer ${auth_response.entity.token}`]],
+}).then(res => res.json());
 
-
-const graphql_headers = new Headers();
-const blog_query = await fetch("./queries/blogs.graphql").then(res => res.text());
+const blog_query = await fetch(`${endpoints.app.queries}/blogs.graphql`).then(res => res.text());
 await fetch("https://demo.dotcms.com/api/v1/graphql", {
   method: "POST",
   body: JSON.stringify({ query: blog_query }),
 })
   .then((res) => res.json())
   .then(tap(console.log));
+
 
 //    author
 //    blogContent

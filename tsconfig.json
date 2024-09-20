@@ -4,7 +4,10 @@
     "module": "Preserve",
     "baseUrl": "src/client",
     "paths": {
-      "@main": ["./main.ts"]
+      "@main": ["./main.ts"],
+      "@core/*": ["./core/*"],
+      "@services/*": ["./core/services/*"],
+      "@queries/*": ["./core/queries/*"],
     }
   }
 }

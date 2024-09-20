@@ -1,0 +1,13 @@
+{
+  "name": "CMS_Data_Cache",
+  "version": 1,
+  "stores": [
+    {
+      "name": "BlogCollection",
+      "primary_key": { "keyPath": ["data", "urlTitle"] },
+      "indices": [
+        { "index_name": "tags", "field_name": ["data", "tags"], "flags": { "unique": false } }
+      ]
+    }
+  ]
+}
