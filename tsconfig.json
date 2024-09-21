@@ -1,10 +1,18 @@
+// this tsconfig.json is just here for Language Server purposes
+
+// swc does all of the heavy-lifting
+// there are .swcrc files in the [root]/build-config folder
 {
   "compilerOptions": {
+
+    // mostly here to support JSON import attributes
     "target": "esnext",
     "module": "esnext",
-    "baseUrl": "src/client",
-    "resolveJsonModule": true,
     "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+
+    // mirroring the importmap; this could be automated, but is ~0 on list of priorities
+    "baseUrl": "src/client",
     "paths": {
       "root/*": ["./*"],
       "@main": ["./main.ts"],
@@ -12,5 +20,6 @@
       "@services/*": ["./core/services/*"],
       "@queries/*": ["./core/queries/*"],
     }
+
   }
 }

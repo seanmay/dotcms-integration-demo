@@ -1,18 +1,21 @@
-const import_path = "config/importmap.json";
+(() => {
+  const import_path = "config/importmap.json";
 
-const bootstrap_application = () => {
-  // for raw build, just append importmap and import @main
-  fetch(import_path).then(res => res.text())
-    .then((content) => {
-      const script = document.createElement("script");
-      script.type = "importmap";
-      script.textContent = content;
-      document.head.append(script);
-    })
-    .then(() => import("@main"));
+  const set_importmap = (text: string) => {
+    const script = document.createElement("script");
+    script.type = "importmap";
+    script.textContent = text;
+    document.head.append(script);
+  };
 
-  // for perf demo, perhaps consider ServiceWorker / caching?
+  const bootstrap_application = () => {
+    // for raw build, just append importmap and import @main
+    fetch(import_path).then(res => res.text())
+      .then(set_importmap)
+      .then(() => import("@main"));
 
-};
-
-bootstrap_application();
+    // for perf demo, perhaps consider ServiceWorker / caching?
+  };
+  
+  bootstrap_application();
+})();

@@ -14,8 +14,21 @@ export type DataIndexSchema = {
   flags?: IDBIndexParameters;
 };
 
-export const DataCache = {
-  open: async (schema: DataCacheSchema) => {
+
+export type DataCache = {
+  db: IDBDatabase;
+  add: (store: string, values: any[]) => Promise<IDBValidKey[]>;
+  get_all: (store: string, limit: number) => Promise<any>;
+  transaction: (mode: IDBTransactionMode, stores: string[], handler: (tx: IDBTransaction) => Promise<any>) => Promise<any>;
+  wrap_request: <T>(request: IDBRequest<T>) => Promise<T>;
+};
+
+export type DataCacheConstruct = {
+  open: (schema: DataCacheSchema) => Promise<DataCache>;
+};
+
+export const DataCache: DataCacheConstruct = {
+  open: async (schema) => {
     const db = await open_db(schema);
     const add = add_data(db);
     const get_all = get_data(db);
