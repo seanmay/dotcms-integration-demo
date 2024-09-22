@@ -3,3 +3,4 @@ export const loader = <T>(transform: (res: Response) => Promise<T>) => (input: F
   fetch(input, init).then(res => res.ok ? transform(res) : Promise.reject(res));
 
 export const load_text = loader(res => res.text());
+export const load_json = loader(res => res.json());

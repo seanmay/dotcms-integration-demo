@@ -1,14 +1,21 @@
 {
   "$schema": "https://swc.rs/schema.json",
   "module": { "type": "es6" },
+
   "jsc": {
     "paths": {},
     "target": "esnext",
     "experimental": { "keepImportAttributes": true },
     "parser": {
       "syntax": "typescript",
-      "importAssertions": true
+      "importAssertions": true,
+      "tsx": true
     },
-    "transform": {}
+    "transform": {
+      "react": {
+        "runtime": "automatic",
+        "refresh": true,
+      }
+    }
   }
 }

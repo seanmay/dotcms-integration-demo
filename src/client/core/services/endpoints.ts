@@ -12,7 +12,7 @@ export type EndpointConfig = {
 export const resolve_cms_endpoints = () => ({
   auth:    import.meta.resolve(`@api/auth/`),
   navbar:  import.meta.resolve(`@api/navbar/`),
-  graphql: import.meta.resolve(`@api/graphql/`),
+  graphql: import.meta.resolve(`@api/graphql`),
   site:    import.meta.resolve(`@site/`),
 } as CMSEndpointConfig);
 

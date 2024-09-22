@@ -8,7 +8,7 @@ Even if this succeeds in being 100% statically contained (minus dotCMS CORS call
 
 ## Organization / Notes
 
-**Ratioonale**
+**Rationale**
 
 - everything interesting will be in `src/client` and built to `dist/client`
 - final build *might* be bundled, but everything will be built loose and reference an `importmap`
@@ -20,6 +20,7 @@ Even if this succeeds in being 100% statically contained (minus dotCMS CORS call
 
 **Conceptual / Target Overview**
 
+```
 /src/server -- "just in case" (https, etc)
 /src/client
 - index.html
@@ -33,5 +34,6 @@ Even if this succeeds in being 100% statically contained (minus dotCMS CORS call
     /components -- atomic components
   /features -- logical "blocks" of behavior
   /pages -- page-level orchestration of features / behavior
+```
 
-Over-engineering? Perhaps... I don't expect all of this will be fully fleshed out, unnless I crank out the whole app.
+Over-engineering? Perhaps... I don't expect all of this will be fully fleshed out, unless I crank out the whole app.

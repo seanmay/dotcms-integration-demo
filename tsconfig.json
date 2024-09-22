@@ -10,7 +10,7 @@
     "module": "esnext",
     "moduleResolution": "Bundler",
     "resolveJsonModule": true,
-
+    "jsx": "react-jsx",
     // mirroring the importmap; this could be automated, but is ~0 on list of priorities
     "baseUrl": "src/client",
     "paths": {

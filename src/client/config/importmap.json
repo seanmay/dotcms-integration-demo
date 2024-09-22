@@ -5,15 +5,19 @@
     "@core/": "./core/",
     "@services/": "./core/services/",
     "@queries/": "./core/queries/",
+    "@vendor/": "./vendor/",
 
     "@site/": "https://demo.dotcms.com/",
     "@api/auth/": "https://demo.dotcms.com/api/v1/authentication/api-token/",
     "@api/navbar/": "https://demo.dotcms.com/api/v1/nav/",
-    "@api/graphql/": "https://demo.dotcms.com/api/v1/graphql/",
+    "@api/graphql": "https://demo.dotcms.com/api/v1/graphql",
 
-    "react": "https://esm.sh/react@rc",
-    "react/": "https://esm.sh/react@rc/",
-    "react-dom": "https://esm.sh/react-dom@rc",
-    "react-dom/": "https://esm.sh/react-dom@rc/"
+    "react": "./vendor/react/main.js",
+    "react/": "./vendor/react/",
+    "react/jsx-runtime": "./vendor/react/jsx-runtime.js",
+    "react-dom": "./vendor/react-dom/main.js",
+    "react-dom/": "./vendor/react-dom/",
+    "react-dom/client": "./vendor/react-dom/client.js",
+    "scheduler": "./vendor/scheduler/main.js"
   }
 }
