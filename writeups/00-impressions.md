@@ -15,9 +15,9 @@ Documenting initial thought processes, relating to the reading of the challenge 
 
 ### Criterion #2: Build Components
 
-**Expected Component List**  
+**Expected Component List**
 
-- Banner (carousel ... consider mechanisms and accessibility)
+- Banner (carousel ... consider mechanisms and accessibility?)
 - Promo (? figure out dimensions / placement)
 - BlogRoll & Page
 - Blog & Page

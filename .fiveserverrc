@@ -1,0 +1,5 @@
+{
+  "port": 8085,
+  "root": "./dist/client/",
+  "open": "index.html"
+}

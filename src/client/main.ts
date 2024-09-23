@@ -27,7 +27,7 @@ root.render(App({ system: { auth, blog, cache, endpoints }}));
 
 
 const auth_response = await auth.get_token("admin@dotcms.com", "admin");
-blog.load_blogs().then(console.log);
+// blog.load_blogs().then(console.log);
 
 const nav_response = await fetch("https://demo.dotcms.com/api/v1/nav/?depth=5", {
   headers: [["Authorization", `Bearer ${auth_response.entity.token}`]],

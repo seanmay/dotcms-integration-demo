@@ -3,7 +3,8 @@
   "private": true,
   "version": "0.0.1",
   "scripts": {
-    "build:client": "",
+    "serve": "npx http-server ./dist/client -g --proxy http://127.0.0.1:8080?",
+    "build:client": "swc compile --config-file ./build-config/production.swcrc --out-dir dist -D --strip-leading-paths --delete-dir-on-start src",
     "dev:client": "swc compile --config-file ./build-config/development.swcrc --out-dir dist --watch -D --strip-leading-paths --delete-dir-on-start src"
   },
   "devDependencies": {

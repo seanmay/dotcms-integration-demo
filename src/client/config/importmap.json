@@ -18,6 +18,11 @@
     "react-dom": "./vendor/react-dom/main.js",
     "react-dom/": "./vendor/react-dom/",
     "react-dom/client": "./vendor/react-dom/client.js",
-    "scheduler": "./vendor/scheduler/main.js"
+    "scheduler": "./vendor/scheduler/main.js",
+
+    "_react": "https://esm.sh/react@rc",
+    "_react/": "https://esm.sh/react@rc/",
+    "_react-dom": "https://esm.sh/react-dom@rc",
+    "_react-dom/": "https://esm.sh/react-dom@rc/"
   }
 }

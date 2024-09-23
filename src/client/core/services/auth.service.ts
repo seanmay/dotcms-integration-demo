@@ -24,9 +24,7 @@ export const AuthService = (config: CMSEndpointConfig) => {
       .then(res => res.ok ? res.json() : Promise.reject(res));
   };
 
-  const auth = {
-    get_token,
-  };
+  const auth = { get_token };
 
   return auth;
 };
