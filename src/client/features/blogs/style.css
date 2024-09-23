@@ -2,9 +2,11 @@
   max-width: 80ch;
   margin: 0 auto;
 
+  h1 { font-size: 3rem; }
+
   img {
     width: 120%;
     transform: translate(-10%);
-    filter: saturate(0.8) brightness(0.8);
+    filter: saturate(0.8) brightness(0.8) drop-shadow(0, 0, 10px, rgb(255 255 255/0.125));
   }
 }

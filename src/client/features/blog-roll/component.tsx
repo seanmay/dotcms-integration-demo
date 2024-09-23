@@ -55,7 +55,9 @@ const BlogCard = ({ blog, img }) => (
     viewTransitionName: blog.titleUrl
   }}>
     <div className="blog-image-clip">
-      <img title={blog.image.name} src={`${img}/webp/20q`} />
+      <img style={{
+        viewTransitionName: `${blog.titleUrl}-image`
+      }} title={blog.image.name} src={`${img}/webp/20q`} />
     </div>
     <div className="card-details">
       <span className="blog-chip">{blog.tags.sort()[0]}</span>

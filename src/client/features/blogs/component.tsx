@@ -5,6 +5,8 @@ import { useBlogCollection } from "../blog-roll/hooks.js";
 import { DocumentBuilder } from "root/core/components/main.js";
 import { flushSync, preload } from "react-dom";
 
+const delay = (ms) => new Promise(res => setTimeout(res, ms));
+
 export const BlogPage = () => {
   const system = use(ServiceProvider);
 
@@ -16,6 +18,9 @@ export const BlogPage = () => {
     set_path(`/blogs/${blog.urlTitle}`);
     document.startViewTransition?.(() => {
       flushSync(() => {});
+      // TODO: I'm sure I can get useTransition / etc to work, eventually...
+      // for now...
+      return delay(20);
     });
   }, []);
 
@@ -63,27 +68,38 @@ const BlogNodeComponents = {
   doc: ({ node, children }) => { console.log("doc", node); return <section>{children}</section>; },
   text: ({ node, children }) => { console.log("Text", node); return <span>{node.text}</span>; },
   paragraph: ({ node, children }) => { console.log("Paragraph", node); return <p>{children}</p>; },
+  // @ts-ignore I know 100% that h1-6 are a thing, and I trust DotCMS to disallow attrs.level=42. This is suboptimal code, but "fine" for a take-home.
   heading: ({ node, children }) => { console.log("Heading", node); const H = `h${node.attrs.level}`; return <H>{children}</H>; },
   bulletList: ({ node, children }) => { console.log("BulletList", node); return <ul>{children}</ul>; },
   listItem: ({ node, children }) => { console.log("ListItem", node); return <li>{children}</li>; },
-  table: ({ node, children }) => { console.log("Table", node); return <table>{children}</table>; }, // TODO: not actual tables; try to figure out if I can build something resize-friendly
+  table: ({ node, children }) => { console.log("Table", node); return <table>{children}</table>; }, // TODO: not actual tables; try to figure out if I can build something resize-friendly on a time-budget.
   tableHeader: ({ node, children }) => { console.log("TableHeader", node); return <th>{children}</th>; },
   tableRow: ({ node, children }) => { console.log("TableRow", node); return <tr>{children}</tr>; },
   tableCell: ({ node, children }) => { console.log("TableCell", node); return <td>{children}</td>; },
-  dotContent: ({ node, children }) => { console.log(`DotContent`, node); return null; },
+  dotContent: ({ node, children }) => { console.log(`DotContent`, node); return <CMSComponents.Content node={node} />; },
   dotImage: ({ node, children }) => { console.log("DotImage", node); return <CMSComponents.Image node={node} />; },
 };
 
 
-
-
 const CMSImage = ({ node }) => {
   const system = use(ServiceProvider);
-  const src = `${system.endpoints.cms.site}.${node.attrs.src}`;
+  const cdn_src = `${system.endpoints.cms.site}.${node.attrs.src}`;
+  const [cdn_path, cdn_query] = cdn_src.split("?");
+  const query = cdn_query ? `?${cdn_query}` : "";
+  const src = `${cdn_path}/webp/80q/${query}`
   const { alt, title } = node.attrs;
   return <img {...{ alt, title, src }} />;
 };
 
+const CMSContent = ({ node }) => {
+  console.log("CMS Content; what am I going to do here?");
+  console.log(node);
+  console.log(node.attrs);
+  return null;
+};
+
+
 const CMSComponents = {
   Image: CMSImage,
+  Content: CMSContent,
 };
