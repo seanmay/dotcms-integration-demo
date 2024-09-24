@@ -23,8 +23,8 @@ export const useBlogCollection = () => {
       .load_blogs()
       .then((blogs) =>
         update_blog_data(() => ({
-          current: blogs.slice(0, 2),
-          pending: blogs.slice(2),
+          current: blogs.slice(0, 3),
+          pending: blogs.slice(3),
         }))
       );
   }, []);

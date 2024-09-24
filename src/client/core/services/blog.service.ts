@@ -8,8 +8,19 @@ export const BlogService = (endpoints: EndpointConfig,  cache: DataCache) => {
   const load_blogs = async () => {
     const results = await cache.get_all("BlogCollection", 100);
 
+    const current_list = results.map(blog => blog.urlTitle);
     return results.length
       ? results : fetch_blogs();
+  };
+
+  const preload_images = (blogs) => {
+    blogs.forEach(blog => {
+      const image = new Image();
+      const image_lg = new Image();
+      const src = `${endpoints.cms.site}.${blog.image.fileAsset.versionPath}/webp`;
+      image.src = `${src}/20q`;
+      image_lg.src = `${src}/80q`;
+    });
   };
 
   let blog_query!: string;
@@ -24,7 +35,8 @@ export const BlogService = (endpoints: EndpointConfig,  cache: DataCache) => {
     return await fetch(endpoints.cms.graphql, { method, headers, body })
       .then((res) => res.json())
       .then(query => query.data.blogs)
-      .then(tap(cache_blogs));
+      .then(tap(cache_blogs))
+      .then(tap(preload_images));
   };
 
   const cache_blogs = (blogs: any) =>

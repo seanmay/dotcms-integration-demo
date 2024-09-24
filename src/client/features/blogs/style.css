@@ -1,12 +1,48 @@
 .blog-post {
   max-width: 80ch;
   margin: 0 auto;
+  padding-bottom: 2rem;
 
   h1 { font-size: 3rem; }
 
-  img {
-    width: 120%;
-    transform: translate(-10%);
-    filter: saturate(0.8) brightness(0.8) drop-shadow(0, 0, 10px, rgb(255 255 255/0.125));
+  p { margin-bottom: 2rem; line-height: 1.4; }
+
+  table {
+    --cols: 1;
+    border-collapse: collapse;
+    border-style: hidden;
+
+    td {
+      width: calc(100% / var(--cols));
+      text-align: center;
+      padding: 1rem;
+    }
+
+    td, th { border: 3px solid grey; }
   }
+
+/*
+  This honestly feels like cheating, compared to pre-:has tables
+  I don't usually use actual tables on sites these days, but this isn't so bad.
+*/
+  table {
+    &:has(th:nth-child(1)) { --cols: 1; }
+    &:has(th:nth-child(2)) { --cols: 2; }
+    &:has(th:nth-child(3)) { --cols: 3; }
+    &:has(th:nth-child(4)) { --cols: 4; }
+  }
+
+  > img,
+  :not(.advertised-product) img {
+    margin-bottom: 2rem;
+    --scale: 1.2;
+    width: calc(var(--scale) * 100%);
+    height: fit-content;
+    transform: translate(calc((1 - (1 / var(--scale)))/ 2 * -100%));
+    filter: saturate(0.8) brightness(0.8) drop-shadow(0 0 10px rgb(255 255 255/0.125));
+  }
+}
+
+.blog-page-content {
+  padding-bottom: 0 4em;
 }

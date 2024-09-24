@@ -1,78 +1,10 @@
-type DocumentRoot<DocumentNode extends BlogNode> = {
-  type: "doc";
-  content: DocumentNode[];
-};
 
-type TextNode = {
-  type: "text";
-  text: string;
-};
-
-type ParagraphNode<DocumentNode extends BlogNode> = {
-  type: "paragraph";
-  content: DocumentNode[];
-};
-
-type TableNode<DocumentNode extends BlogNode> = {
-  type: "table";
-  content: TableRowNode<DocumentNode> | TableHeaderNode<DocumentNode>[];
-};
-
-type TableRowNode<DocumentNode extends BlogNode> = {
-  type: "tableRow";
-  content: TableCellNode<DocumentNode>[];
-};
-
-type TableHeaderNode<DocumentNode extends BlogNode> = {
-  type: "tableHeader";
-  content: TableCellNode<DocumentNode>[];
-};
-
-type TableCellNode<DocumentNode extends BlogNode>= {
-  type: "tableCell";
-  content: (TextNode|ParagraphNode<DocumentNode>)[];
-};
-
-type BlogContentNode = {};
-type BlogContent = {
-  json: DocumentRoot<BlogNode>;
-};
-
-/*
-  ['doc', 'paragraph', 'text', 'heading', 'bulletList', 'listItem', 'dotContent', 'dotImage', 'table', 'tableRow', 'tableHeader', 'tableCell']
-*/
-
-type BaseNode = BaseLeafNode | BaseBranchNode | BaseRootNode;
-type BaseLeafNode = { type: string; };
-type BaseBranchNode = { type: string; content: BaseNode[]; };
-type BaseRootNode = { type: "doc"; content: BaseNode[]; };
-
-type ComponentMap<NodeSet extends BaseNode> = {
-  [K in NodeSet["type"]]: NodeConstructor<NodeSet, K>
-};
-
-type NodeConstructor<NodeSet extends BaseNode, Type extends NodeSet["type"]> = React.JSXElementConstructor<{
-  node: Extract<NodeSet, { type: Type }>,
-  children?: React.ReactNode
-}>;
-
-
-type BlogLeaf =
-  | TextNode;
-
-type BlogBranch =
-  | ParagraphNode<BlogNode>
-  | TableNode<BlogNode>
-  | TableHeaderNode<BlogNode>;
-
-type BlogNode = BlogBranch | BlogLeaf;
-
-type BlogRoot = 
-  | DocumentRoot<BlogNode>;
-
-type BlogDocument = BlogRoot | BlogNode;
-
-type BlogMap = ComponentMap<BlogRoot | BlogNode>;
+type GenericNode = {
+  type: string;
+  
+  content?: GenericNode[];
+}
+type BlogMap = ComponentMap<Record<string, GenericNode>>;
 
 
 

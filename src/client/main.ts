@@ -20,22 +20,35 @@ const auth = AuthService(endpoints.cms);
 const blog = BlogService(endpoints, cache);
 
 import { App } from "./app.js";
-import { load_json } from "./core/loaders.js";
+import { load_json, load_text } from "./core/loaders.js";
 const root = createRoot(document.querySelector("[data-app-root]"), { });
 root.render(App({ system: { auth, blog, cache, endpoints }}));
 
 
 
-const auth_response = await auth.get_token("admin@dotcms.com", "admin");
+const auth_token = await auth.authenticate("admin@dotcms.com", "admin");
 // blog.load_blogs().then(console.log);
-
+console.log(auth_token);
 const nav_response = await fetch("https://demo.dotcms.com/api/v1/nav/?depth=5", {
-  headers: [["Authorization", `Bearer ${auth_response.entity.token}`]],
+  headers: [["Authorization", `Bearer ${auth_token}`]],
 }).then(res => res.json());
 
-load_json("https://demo.dotcms.com/api/content/render/false/query/+contentType:Banner/depth/2", {
-  method: "GET"
-}).then(console.log);
+// load_json("https://demo.dotcms.com/api/content/render/false/query/+contentType:Banner/depth/2", {
+//   method: "GET",
+//   headers: [["Authorization", `Bearer ${auth_token}`]],
+// }).then(console.log);
+
+// load_json("https://demo.dotcms.com/api/v1/contenttype/", {
+//   method: "GET",
+//   headers: [["Authorization", `Bearer ${auth_response.entity.token}`]],
+// }).then(console.log);
+
+// load_text("https://demo.dotcms.com/application/vtl/carousel/banner-carousel.vtl", {
+//   method: "GET",
+//   // headers: [["Authorization", `Bearer ${auth_response.entity.token}`]],
+// }).then(console.log);
+
+
 
 // const blogs = blog_data.data.blogs;
 // console.time("BlogCollection.Process");

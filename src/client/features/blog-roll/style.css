@@ -30,6 +30,7 @@
 
 .blog-card {
   --max-image-height: 25ch;
+  overflow: hidden;
   contain: content;
   height: 100%;
   border: 2px solid hsl(0, 0%, 40%);
@@ -51,11 +52,20 @@
   height: var(--max-image-height);
   position: relative;
 
+  opacity: 1;
+  transition-property: opacity;
+  transition-duration: 0.25s;
+
+  @starting-style {
+    opacity: 0;
+  }
+
   img {
     position: absolute;
     bottom: 0px;
     width: 100%;
-    transition-property: filter transform;
+    height:fit-content;
+    transition-property: filter, transform;
     transition-duration: 0.5s;
     transition-timing-function: ease-out;
 
@@ -89,4 +99,17 @@
 .card-details {
   --content-inset: 2rem;
   padding: var(--content-inset);
+}
+
+
+.blog-content-button {
+  position: absolute;
+  background-color: oklch(60% 20% 220);
+  padding: 1rem 2rem;
+  font-size: 1.75rem;
+  border-radius: 0.25rem;
+  outline: none;
+  border: none;
+  z-index: 1;
+  transform: translate(-120%, 0);
 }

@@ -1,8 +1,10 @@
 import type { CMSEndpointConfig } from "./endpoints";
 
 export const AuthService = (config: CMSEndpointConfig) => {
-
-  const get_token = (user: string, password: string) => {
+  // TODO: actual diligence
+  const get_token = () => temp_token.promise;
+  let temp_token = Promise.withResolvers();
+  const authenticate = (user: string, password: string) => {
     const headers = [
       ["Content-Type", "application/json"],
     ];
@@ -21,10 +23,14 @@ export const AuthService = (config: CMSEndpointConfig) => {
     };
 
     return fetch(config.auth, request)
-      .then(res => res.ok ? res.json() : Promise.reject(res));
+      .then(res => res.ok ? res.json() : Promise.reject(res))
+      .then(response => {
+        temp_token.resolve(response.entity.token);
+        return temp_token.promise;
+      });
   };
 
-  const auth = { get_token };
+  const auth = { get_token, authenticate };
 
   return auth;
 };

@@ -22,21 +22,19 @@ export const BlogRoll = ({ blogs, update_list, onSelected }) => {
     onSelected(blog);
   }, []);
 
-  if (!blogs?.current?.length)
-    return [];
-
   return (
     <section className="blog-roll">
       <link rel="stylesheet" href={`${import.meta.url}/../style.css`} />
-      {!!blogs.pending.length && (
-        <button onClick={transition_pending_blogs}>Show New</button>
+      {!!blogs?.pending.length && (
+        <button className="blog-content-button" onClick={transition_pending_blogs}>More Blogs</button>
       )}
-      <section className="blog-list" hidden={!blogs.current.length}>
-        {blogs.current.map((blog) => (
+      <section className="blog-list" hidden={!blogs?.current.length}>
+        {blogs?.current.map((blog, i) => (
           <a
             onClick={(e) => navigate_to_blog(e, blog)}
             href={`/blogs/${blog.urlTitle}`}
             key={blog.urlTitle}
+            style={{ viewTransitionName: `blog-card-${blog.urlTitle}`}}
           >
             <BlogCard
               blog={blog}
@@ -50,19 +48,26 @@ export const BlogRoll = ({ blogs, update_list, onSelected }) => {
 };
 
 
-const BlogCard = ({ blog, img }) => (
-  <article className="blog-card" style={{
-    viewTransitionName: blog.titleUrl
-  }}>
-    <div className="blog-image-clip">
-      <img style={{
-        viewTransitionName: `${blog.titleUrl}-image`
-      }} title={blog.image.name} src={`${img}/webp/20q`} />
-    </div>
-    <div className="card-details">
-      <span className="blog-chip">{blog.tags.sort()[0]}</span>
-      <h2>{blog.title}</h2>
-      <p>{blog.teaser}</p>
-    </div>
-  </article>
-);
+const BlogCard = ({ blog, img }) => {
+  const image = blog.image.fileAsset;
+  return (
+    <article
+      className="blog-card"
+      style={{ viewTransitionName: blog.urlTitle }}>
+      <div className="blog-image-clip">
+        <img
+          style={{ viewTransitionName: `${blog.urlTitle}-image` }}
+          title={image.name}
+          width={image.width}
+          height={image.height}
+          src={`${img}/webp/20q`}
+        />
+      </div>
+      <div className="card-details">
+        <span className="blog-chip">{blog.tags.sort()[0]}</span>
+        <h2 style={{ viewTransitionName: `${blog.title}` }}>{blog.title}</h2>
+        <p>{blog.teaser}</p>
+      </div>
+    </article>
+  );
+};

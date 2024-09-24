@@ -1,28 +1,30 @@
-import { use, useCallback, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { flushSync, preload } from "react-dom";
 import { ServiceProvider } from "@core/providers.js";
 import { BlogRoll } from "../blog-roll/component.js";
 import { useBlogCollection } from "../blog-roll/hooks.js";
-import { DocumentBuilder } from "root/core/components/main.js";
-import { flushSync, preload } from "react-dom";
+import { DocumentBuilder } from "@core/components/main.js";
+import { CMSComponents, CMSTextMarks } from "../promo/component.js";
+import { Banner } from "../promo/banners.js";
+import { load_json } from "root/core/loaders.js";
 
-const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
 export const BlogPage = () => {
   const system = use(ServiceProvider);
 
   const [blogs, update_blog_list] = useBlogCollection();
   const [path, set_path] = useState("/");
+  const [banners, set_banners] = useState([]); 
 
   const select_blog = useCallback((blog) => {
-    history.pushState({}, null, `/blogs/${blog.urlTitle}`);
-    set_path(`/blogs/${blog.urlTitle}`);
-    document.startViewTransition?.(() => {
-      flushSync(() => {});
-      // TODO: I'm sure I can get useTransition / etc to work, eventually...
-      // for now...
-      return delay(20);
-    });
-  }, []);
+    const navigate = () => {
+      const path = `/blogs/${blog.urlTitle}`;
+      history.pushState({}, null, path);
+      set_path(path);
+    };
+    const transition = () => flushSync(navigate); 
+    document.startViewTransition?.(transition) ?? navigate();
+  }, [set_path]);
 
   useEffect(() => {
     const initial_path = new URL(location.href).pathname;
@@ -32,27 +34,61 @@ export const BlogPage = () => {
     } else {
       set_path(initial_path);
     }
+
+    fetch_banners(system).then(set_banners);
   }, []);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const on_navigation = () => set_path(location.pathname); 
+    window.addEventListener("popstate", on_navigation, controller);
+    return () => controller.abort();
+  }, [set_path]);
 
   const parts = path.slice(1).split("/");
   const blog_id = parts[1];
-  const blog = blogs.current.find(blog => blog.urlTitle === blog_id);
+  const blog = [...blogs.current, ...blogs.pending]
+    .find(blog => blog.urlTitle === blog_id);
+  
   const blog_img = blog
-    ? `${system.endpoints.cms.site}.${blog?.titleImage.versionPath}`
+    ? `${system.endpoints.cms.site}.${blog?.titleImage.versionPath}/webp/80q`
     : "";
 
-  return blog
-    ? <Blog blog={blog} img={blog_img} />
+  const content = blog
+    ? <Blog blog={blog} img={blog_img}  />
     : <BlogRoll blogs={blogs} update_list={update_blog_list} onSelected={select_blog} />
-};
-
-export const Blog = ({ blog, img }) => {
-  preload(`${import.meta.url}/../style.css`, { as: "style" });
 
   return (
-    <article className="blog-post" style={{ viewTransitionName: blog.urlTitle }}>
+    <>
+      <link rel="stylesheet" href={`./features/promo/banner-style.css`}></link>
+      <Banner banners={banners} />
+      <section className="blog-page-content" style={{ position: "relative" }}>
+        {content}
+      </section>
+    </>
+  );
+};
+
+
+export const Blog = ({ blog, img }) => {
+  const blog_ref = useRef<HTMLElement>(null);
+  const image_ref = useRef<HTMLImageElement>(null);
+
+  preload(`${import.meta.url}/../style.css`, { as: "style" });
+  preload(`${import.meta.url}/../../promo/style.css`, { as: "style" });
+
+  useEffect(() => {
+    // @ts-ignore
+    blog_ref.current.style.viewTransitionName = blog.urlTitle;
+    // @ts-ignore
+    image_ref.current.style.viewTransitionName = `${blog.urlTitle}-image`;
+  }, [blog, img]);
+
+  return (
+    <article ref={blog_ref} className="blog-post">
       <link rel="stylesheet" href={`${import.meta.url}/../style.css`} />
-      <img style={{ viewTransitionName: `${blog.urlTitle}-image` }} src={img} />
+      <link rel="stylesheet" href={`${import.meta.url}/../../promo/style.css`} />
+      <img ref={image_ref} src={img} width={blog.titleImage.width} height={blog.titleImage.height} />
       <h1>{blog.title}</h1>
       <DocumentBuilder node={blog.blogContent.json} components={BlogNodeComponents} />
     </article>
@@ -60,46 +96,38 @@ export const Blog = ({ blog, img }) => {
 };
 
 
-// Nodes built for recursive descent. No time to research every field on every ContentField on every ContentType.
+// Nodes built for recursive descent. No time to research every ContentField for every ContentType.
 // Definitely no time for the Velocity metaprogramming and node-parsing .vtls to pull JSON out...
 // Will try to write components for dot____ nodes
 // But I will log everything that comes through the blogs in the demo content, and develop what is used.
 const BlogNodeComponents = {
-  doc: ({ node, children }) => { console.log("doc", node); return <section>{children}</section>; },
-  text: ({ node, children }) => { console.log("Text", node); return <span>{node.text}</span>; },
-  paragraph: ({ node, children }) => { console.log("Paragraph", node); return <p>{children}</p>; },
-  // @ts-ignore I know 100% that h1-6 are a thing, and I trust DotCMS to disallow attrs.level=42. This is suboptimal code, but "fine" for a take-home.
-  heading: ({ node, children }) => { console.log("Heading", node); const H = `h${node.attrs.level}`; return <H>{children}</H>; },
-  bulletList: ({ node, children }) => { console.log("BulletList", node); return <ul>{children}</ul>; },
-  listItem: ({ node, children }) => { console.log("ListItem", node); return <li>{children}</li>; },
-  table: ({ node, children }) => { console.log("Table", node); return <table>{children}</table>; }, // TODO: not actual tables; try to figure out if I can build something resize-friendly on a time-budget.
-  tableHeader: ({ node, children }) => { console.log("TableHeader", node); return <th>{children}</th>; },
-  tableRow: ({ node, children }) => { console.log("TableRow", node); return <tr>{children}</tr>; },
-  tableCell: ({ node, children }) => { console.log("TableCell", node); return <td>{children}</td>; },
-  dotContent: ({ node, children }) => { console.log(`DotContent`, node); return <CMSComponents.Content node={node} />; },
-  dotImage: ({ node, children }) => { console.log("DotImage", node); return <CMSComponents.Image node={node} />; },
+  doc: ({ node, children }) => { return <section>{children}</section>; },
+  text: ({ node, children }) => { return (node.marks ?? []).reduceRight(apply_text_mark, node.text); },
+  paragraph: ({ node, children }) => { return <p>{children}</p>; },
+  // @ts-ignore I know 100% that h1-6 are a thing, and I trust DotCMS to disallow attrs.level=42.
+  heading: ({ node, children }) => { const H = `h${node.attrs.level}`; return <H>{children}</H>; },
+  bulletList: ({ node, children }) => { return <ul>{children}</ul>; },
+  listItem: ({ node, children }) => { return <li>{children}</li>; },
+  table: ({ node, children }) => { return <table>{children}</table>; }, // TODO: not actual tables; try to figure out if I can build something resize-friendly on a time-budget.
+  tableHeader: ({ node, children }) => { return <th>{children}</th>; },
+  tableRow: ({ node, children }) => { return <tr>{children}</tr>; },
+  tableCell: ({ node, children }) => { return <td>{children}</td>; },
+  dotContent: ({ node, children }) => { return <CMSComponents.Content node={node} />; },
+  dotImage: ({ node, children }) => { return <CMSComponents.Image node={node} />; },
 };
 
-
-const CMSImage = ({ node }) => {
-  const system = use(ServiceProvider);
-  const cdn_src = `${system.endpoints.cms.site}.${node.attrs.src}`;
-  const [cdn_path, cdn_query] = cdn_src.split("?");
-  const query = cdn_query ? `?${cdn_query}` : "";
-  const src = `${cdn_path}/webp/80q/${query}`
-  const { alt, title } = node.attrs;
-  return <img {...{ alt, title, src }} />;
+const apply_text_mark = (children, mark) => {
+  const Mark = CMSTextMarks[mark.type];
+  return <Mark mark>{children}</Mark>;
 };
 
-const CMSContent = ({ node }) => {
-  console.log("CMS Content; what am I going to do here?");
-  console.log(node);
-  console.log(node.attrs);
-  return null;
-};
-
-
-const CMSComponents = {
-  Image: CMSImage,
-  Content: CMSContent,
+const fetch_banners = async (system) => {
+  const url = "https://demo.dotcms.com/api/content/render/false/query/+contentType:Banner/depth/2";
+ 
+  const token = await system.auth.get_token();
+  const banner_data = await load_json(url, {
+    method: "GET",
+    headers: [["Authorization", `Bearer ${token}`]],
+  });
+  return banner_data;
 };
